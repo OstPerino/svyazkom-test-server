@@ -9,6 +9,13 @@ use ResidentService;
 class ResidentController extends Controller
 {
 
+    protected ResidentService $residentService;
+
+    public function __construct(ResidentService $residentService)
+    {
+        $this->residentService = $residentService;
+    }
+
     public function getAllResidents() {
         $residents = Resident::all();
         return $residents;
@@ -37,7 +44,7 @@ class ResidentController extends Controller
         $validatedData = $request->validate([
             'fio' => 'required|max:255',
             'area' => 'required',
-            'start_date' => 'required'
+            'start_date' => 'nullable'
         ]);
 
         $resident->fill($validatedData);

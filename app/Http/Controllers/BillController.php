@@ -21,17 +21,21 @@ class BillController extends Controller
     public function create(Request $request) {
         $validatedData = $request->validate([
             "resident_id" => "required:int",
-            "period_id" => "nullable:int",
         ]);
 
+        // TODO: Validation on resident
+        // TODO: Add validation on is already here bill for this resident on this month
         $resident = Resident::find($validatedData["resident_id"]);
-        $period = Period::find($validatedData["period_id"]);
+
+        $now = Carbon::now();
+        $begin_date = $now->startOfMonth()->format('Y-m-d H:i:s');
+        $end_date = $now->endOfMonth()->format('Y-m-d H:i:s');
+
+        $period = Period::where('begin_date', $begin_date)
+            ->where('end_date', $end_date)
+            ->first();
 
         if (!$period) {
-            $now = Carbon::now();
-            $begin_date = $now->startOfMonth()->format('Y-m-d H:i:s');
-            $end_date = $now->endOfMonth()->format('Y-m-d H:i:s');
-
             $new_period = new Period([
                 "begin_date" => $begin_date,
                 "end_date" => $end_date
@@ -59,16 +63,18 @@ class BillController extends Controller
 
         // TODO: Filling pump meter records
         // TODO: Проверить даты (почему то не чекается часовой пояс)
+        // TODO: Добавить валидацию на памп метер рекордс
+        // TODO: (если уже есть на этот период, то обновляем)
 
         $billData = [
-          "resident_id" => $resident->id,
-          "period_id" => $period_id,
-          "amount_rub" => $billAmountRub
+            "resident_id" => $resident->id,
+            "period_id" => $period_id,
+            "amount_rub" => $billAmountRub
         ];
 
         $pumpMeterRecord = [
-          "period_id" => $period_id,
-          "amount_volume" => $amount_volume,
+            "period_id" => $period_id,
+            "amount_volume" => $amount_volume,
         ];
 
         $newBill = new Bill($billData);
