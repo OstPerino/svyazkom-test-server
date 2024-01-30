@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Resident;
 use Illuminate\Http\Request;
-use ResidentService;
+use App\Services\ResidentService;
 
 class ResidentController extends Controller
 {
@@ -16,57 +15,40 @@ class ResidentController extends Controller
         $this->residentService = $residentService;
     }
 
-    public function getAllResidents() {
-        $residents = Resident::all();
-        return $residents;
+    public function getAll() {
+        return $this->residentService->getAll();
     }
 
-    public function getResidentById($id) {
-        $resident = Resident::findOrFail($id);
-        return $resident;
+    public function getById($id) {
+        return $this->residentService->getById($id);
     }
 
-    public function createResident(Request $request) {
+    public function create(Request $request) {
         $validatedData = $request->validate([
             'fio' => 'required|max:255',
-            'area' => 'required',
+            'area' => 'required|numeric',
         ]);
 
-        $validatedData['start_date'] = date('Y-m-d H:i:s');
+        $resident = $this->residentService->create($validatedData);
 
-        $resident = new Resident($validatedData);
-        $resident->save();
+        return response()->json($resident);
     }
 
-    public function updateResident(Request $request, $id) {
-        $resident = Resident::findOrFail($id);
-
+    public function update(Request $request, $id) {
         $validatedData = $request->validate([
-            'fio' => 'required|max:255',
-            'area' => 'required',
-            'start_date' => 'nullable'
+            'fio' => 'nullable|max:255',
+            'area' => 'nullable|numeric',
+            'start_date' => 'nullable|date'
         ]);
 
-        $resident->fill($validatedData);
-        $resident->save();
+        $resident = $this->residentService->update($id, $validatedData);
+
+        return response()->json($resident);
     }
 
-    public function deleteResident($id) {
-        // TODO: Check if is there bill on this resident
-        $resident = Resident::findOrFail($id);
-        $resident->delete();
-    }
-
-    public static function getTotalArea(): float
-    {
-        $residents = Resident::all();
-        $totalArea = 0;
-
-        $residents->each(function (Resident $resident) use (&$totalArea) {
-            $totalArea += $resident->area;
-        });
-
-        return $totalArea;
+    public function delete($id) {
+        $resident = $this->residentService->delete($id);
+        return response()->json($resident);
     }
 
 }
