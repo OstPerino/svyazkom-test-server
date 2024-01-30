@@ -20,7 +20,7 @@ return new class extends Migration
 
         DB::table('tariff')->insert([
             'begin_date' => date('Y-m-d H:i:s'),
-            'amount_rub' => 50,
+            'amount_rub' => 250,
         ]);
 
     }

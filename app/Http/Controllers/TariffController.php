@@ -2,24 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\TariffService;
 use Illuminate\Http\Request;
-use App\Models\Tariff;
 
 class TariffController extends Controller
 {
 
+    protected TariffService $tariffService;
+
+    public function __construct(TariffService $tariffService)
+    {
+        $this->tariffService = $tariffService;
+    }
+
     public function create(Request $request) {
-        // TODO: Add validation
-        // TODO: Add exception if already exist or begin_date is passed
         $validatedData = $request->validate([
-           "begin_date" => "required",
-           "amount_rub" => "required",
+           "begin_date" => "required|date",
+           "amount_rub" => "required|numeric",
         ]);
 
-        $tariff = new Tariff($validatedData);
+        $tariff = $this->tariffService->create($validatedData);
 
-        $tariff->save();
-
-        return $tariff;
+        return response()->json($tariff);
     }
 }
