@@ -18,7 +18,7 @@ class TariffService {
         $tariff = Tariff::where('begin_date', '<=', $endDate)
             ->orderBy('begin_date', 'desc')
             ->first();
-
+        
         return $tariff;
     }
 }

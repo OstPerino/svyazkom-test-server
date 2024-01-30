@@ -37,7 +37,7 @@ class ResidentController extends Controller
     public function update(Request $request, $id) {
         $validatedData = $request->validate([
             'fio' => 'nullable|max:255',
-            'area' => 'nullable|numeric',
+            'area' => 'nullable|numeric:5000',
             'start_date' => 'nullable|date'
         ]);
 

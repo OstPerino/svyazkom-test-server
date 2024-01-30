@@ -30,6 +30,7 @@ Route::get("/period", [PeriodController::class, "getAll"]);
 
 // Tariff routes
 Route::post("/tariff", [TariffController::class, "create"]);
+Route::get("/tariff", [TariffController::class, "getCurrentTariff"]);
 
 // Bill routes
 Route::post("/bill", [BillController::class, "create"]);
