@@ -41,4 +41,4 @@ Route::post("/bill", [BillController::class, "create"]);
 Route::get("/bill", [BillController::class, "getAll"]);
 
 // Record routes
-Route::post("/record", [BillController::class, "create"]);
+Route::post("/record", [PumpMeterRecordsController::class, "create"]);
