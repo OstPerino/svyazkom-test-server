@@ -7,8 +7,6 @@ use App\Models\Resident;
 
 use App\Models\Tariff;
 
-
-// TODO: Добавить транки на округление
 class BillService
 {
 
@@ -36,6 +34,35 @@ class BillService
         return $bills;
     }
 
+    /*
+     *
+     * Посчитать общую стоимость (тарифф на общее кол-во воды)
+     * Процент участка челика = текущая площадь * 100 / общую
+     * Стоимость для участка = общая стоимость * процент участка / 100
+     *
+     */
+
+    public function countBills($tariff, $amountVolume, $periodId) {
+        $residents = Resident::all();
+
+        $totalArea = $this->residentService->getTotalArea();
+        $totalCost = $tariff * $amountVolume;
+
+        foreach ($residents as $resident) {
+            $area = $resident->area;
+
+            $amountRub = $totalCost * ($area / $totalArea);
+            $billData = [
+                "resident_id" => $resident["id"],
+                "period_id" => $periodId,
+                "amount_rub" => $amountRub
+            ];
+
+            $bill = new Bill($billData);
+            $bill->save();
+        }
+    }
+
     public function create($body)
     {
         $resident = Resident::find($body["resident_id"]);
@@ -59,10 +86,6 @@ class BillService
         $amountRub = $amounts["amountRub"];
         $amountVolume = $amounts["amountVolume"];
 
-        // TODO: Проверить даты (почему то не чекается часовой пояс)
-        // TODO: Добавить валидацию на памп метер рекордс
-        // TODO: (если уже есть на этот период, то обновляем)
-        // TODO: KEEP ON
         $billData = [
             "resident_id" => $resident->id,
             "period_id" => $periodId,

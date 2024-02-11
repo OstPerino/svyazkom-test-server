@@ -11,4 +11,9 @@ class Tariff extends Model {
     protected $fillable = ["begin_date", "amount_rub"];
 
     protected $table = "tariff";
+
+    protected $casts = [
+        'amount_rub' => 'double',
+    ];
+
 }

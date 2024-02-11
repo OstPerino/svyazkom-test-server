@@ -12,4 +12,8 @@ class PumpMeterRecord extends Model
     protected $fillable = ["period_id", "amount_volume"];
 
     protected $table = "pump_meter_records";
+
+    protected $casts = [
+        'pump_meter_records' => 'double',
+    ];
 }
