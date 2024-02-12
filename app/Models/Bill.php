@@ -23,4 +23,8 @@ class Bill extends Model {
     }
 
     protected $table = "bills";
+
+    protected $casts = [
+        'amount_rub' => 'double',
+    ];
 }

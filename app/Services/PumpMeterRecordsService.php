@@ -28,40 +28,34 @@ class PumpMeterRecordsService
 
     public function record($body)
     {
-        $tariff = Tariff::where('begin_date', '<=', $body["end_date"])
+        $beginDate = $body["beginDate"] ?? null;
+        $endDate = $body["endDate"] ?? null;
+
+        $period = $this->periodService->checkOrCreate($beginDate, $endDate);
+
+        $tariff = Tariff::where('begin_date', '<=', $period["end_date"])
             ->orderBy('begin_date', 'desc')
             ->first();
-
-        $period = $this->periodService->checkOrCreate($body["begin_date"], $body["end_date"]);
 
         $pumpMeterRecordsBody = [
             "period_id" => $period["id"],
             "amount_volume" => $body["amount_volume"]
         ];
 
-        $pumpMeterRecords = new PumpMeterRecord($pumpMeterRecordsBody);
-        $pumpMeterRecords->save();
+        $checkRecord = PumpMeterRecord::where("period_id", $period["id"])
+            ->first();
 
-        $this->billService->countBills(
-            $tariff["amount_rub"],
-            $body["amount_volume"],
-            $period["id"]
-        );
-
-        return $pumpMeterRecords;
-    }
-
-    public function createOrUpdate($body)
-    {
-        $exist = PumpMeterRecord::where("period_id", $body["period_id"])->first();
-
-        if ($exist) {
-            $exist->fill($body);
-            return $exist;
+        if ($checkRecord) {
+            return $checkRecord;
         } else {
-            $pumpMeterRecord = new PumpMeterRecord($body);
-            $pumpMeterRecord->save();
-            return $pumpMeterRecord;
+            $pumpMeterRecords = new PumpMeterRecord($pumpMeterRecordsBody);
+            $pumpMeterRecords->save();
+            $this->billService->countBills(
+                $tariff["amount_rub"],
+                $body["amount_volume"],
+                $period["id"]
+            );
+            return $pumpMeterRecords;
         }
     }
 

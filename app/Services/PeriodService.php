@@ -35,21 +35,32 @@ class PeriodService
 
     public function checkOrCreate($beginDate, $endDate) {
 
-        if (!$beginDate || !$endDate) {
-            $newPeriod = new Period([
-                "begin_date" => $beginDate,
-                "end_date" => $endDate
-            ]);
-
-            $newPeriod->save();
-            $periodId = $newPeriod->id;
-        } else {
+        if ($beginDate && $endDate) {
             $period = Period::where('begin_date', $beginDate)
                 ->where('end_date', $endDate)
                 ->first();
-            $periodId = $period->id;
+
+        } else {
+
+            $periodData = $this->createPeriodDates();
+
+            $newPeriod = new Period([
+                "begin_date" => $periodData["beginDate"],
+                "end_date" => $periodData["endDate"]
+            ]);
+
+            $checkPeriod = Period::where("begin_date", $newPeriod["begin_date"])
+                ->where("end_date", $newPeriod["end_date"])
+                ->first();
+
+            if ($checkPeriod) {
+                $period = $checkPeriod;
+            } else {
+                $newPeriod->save();
+                $period = $newPeriod;
+            }
         }
 
-        return $periodId;
+        return $period;
     }
 }

@@ -32,13 +32,8 @@ Route::get("/period", [PeriodController::class, "getAll"]);
 Route::post("/tariff", [TariffController::class, "create"]);
 Route::get("/tariff", [TariffController::class, "getCurrentTariff"]);
 
-// Pump meter records routes
-//Route::post("/create", [PumpMeterRecordsController::class, "create"]);
+// Pump meter records
+Route::post("/record", [PumpMeterRecordsController::class, "record"]);
 
-// DEPRECATED
-// Bill routes
-Route::post("/bill", [BillController::class, "create"]);
+// Bills
 Route::get("/bill", [BillController::class, "getAll"]);
-
-// Record routes
-Route::post("/record", [PumpMeterRecordsController::class, "create"]);

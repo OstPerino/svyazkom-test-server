@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Models\Tariff;
 
-class TariffService {
+class TariffService
+{
 
-    public function create($validatedData) {
+    public function create($validatedData)
+    {
         $tariff = new Tariff($validatedData);
 
         $tariff->save();
@@ -14,11 +16,16 @@ class TariffService {
         return $tariff;
     }
 
-    public function getCurrentTariff($endDate) {
+    public function getCurrentTariff($endDate)
+    {
         $tariff = Tariff::where('begin_date', '<=', $endDate)
             ->orderBy('begin_date', 'desc')
             ->first();
 
-        return $tariff;
+        if ($tariff) {
+            return $tariff;
+        } else {
+                return Tariff::orderBy('begin_date', 'asc')->first();
+            }
+        }
     }
-}

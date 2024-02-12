@@ -14,6 +14,6 @@ class PumpMeterRecord extends Model
     protected $table = "pump_meter_records";
 
     protected $casts = [
-        'pump_meter_records' => 'double',
+        'amount_volume' => 'double',
     ];
 }
