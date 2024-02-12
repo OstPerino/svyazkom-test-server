@@ -1,11 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\TariffController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ResidentController;
+use App\Http\Controllers\PumpMeterRecordsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +32,8 @@ Route::get("/period", [PeriodController::class, "getAll"]);
 Route::post("/tariff", [TariffController::class, "create"]);
 Route::get("/tariff", [TariffController::class, "getCurrentTariff"]);
 
-// Bill routes
-Route::post("/bill", [BillController::class, "create"]);
+// Pump meter records
+Route::post("/record", [PumpMeterRecordsController::class, "record"]);
+
+// Bills
 Route::get("/bill", [BillController::class, "getAll"]);

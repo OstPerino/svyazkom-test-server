@@ -11,4 +11,9 @@ class Resident extends Model {
     protected $fillable = ["fio", "area", "start_date"];
 
     protected $table = "residents";
+
+    protected $casts = [
+        'area' => 'double',
+    ];
+
 }
